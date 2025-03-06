@@ -1,12 +1,12 @@
 from fastapi import FastAPI, HTTPException
 from model.user_connection import UserConnection
 from schema.user_schema import UserSchema
-
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 conn = UserConnection()
 
-@app.get("/") #Aca se muestra la lista de usuarios guardados en la BD
+@app.get("/users") #Aca se muestra la lista de usuarios guardados en la BD
 def root():
     items = []
     for data in conn.read_all():
@@ -50,4 +50,10 @@ def delete(id:str):
     conn.delete(id)
     return {"messege": "Data deleted successfully"}
 
-
+app.add_middleware( #Aca se configura el CORS para que la API pueda ser consumida por el frontend
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
